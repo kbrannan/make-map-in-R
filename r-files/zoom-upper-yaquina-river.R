@@ -39,7 +39,7 @@ zoom <- min(MaxZoom(range(sp.wtsd.bnd.g@bbox[2,]),
 
 # get the Google Maps tile to use as background
 gm.wtsd.bnd <- get_googlemap(center = center, size = c(640, 640), 
-                        zoom=zoom, maptype="terrain")
+                        zoom=zoom, maptype="roadmap")
 
 
 ## plot google map tile and watershed boundary
