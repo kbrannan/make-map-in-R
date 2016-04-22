@@ -41,9 +41,25 @@ zoom <- min(MaxZoom(range(sp.wtsd.bnd.g@bbox[2,]),
 gm.wtsd.bnd <- get_googlemap(center = center, size = c(640, 640), 
                         zoom=zoom, maptype="roadmap")
 
+## get mid-coast boundary
+dns.md <- "m:/GIS/shapefiles/HUC"
+name.md <- "MidCoast_HUC08_with_ocean"
+
+# read watershed boundary into spatial.data.frame
+sp.md.bnd <- readOGR(dsn = dns.md, layer = name.md)
+
+## get the projection arguments for the Google Maps crs
+google.proj4string <- CRS("+init=epsg:4326")
+
+## transform state boundary to Google Maps crs
+sp.md.bnd.g <- spTransform(sp.md.bnd, google.proj4string)
+
 
 ## plot google map tile and watershed boundary
 ggmap(gm.wtsd.bnd, extent="device") + 
+  geom_polygon(data = sp.md.bnd.g,
+            aes(x = long, y = lat), 
+            fill = "green") +
   geom_path(data = sp.wtsd.bnd.g,
                aes(x = long, y = lat, group=group), 
             colour = "red", size = 1.25)

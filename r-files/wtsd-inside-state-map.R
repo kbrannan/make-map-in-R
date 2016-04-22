@@ -18,6 +18,22 @@ load(file = paste0(chr.make.map.dir,
 ## load wtsd bnd data
 load(file = paste0(chr.make.map.dir, 
                    "/data-files/wtsd-bnd-upper-yaquina.RData"))
+## coords for arrows
+df.arrow <- data.frame(x = mean(sp.wtsd.bnd.g@bbox[1, ]), 
+                       xend = 0.5 * gm.state.bb[2],
+                       y = mean(sp.wtsd.bnd.g@bbox[2, ]),
+                       yend.bot =  0.7 * gm.state.bb[1],
+                       yend.top =  0.7 * gm.state.bb[1] +
+                         0.5 * mean(sp.wtsd.bnd.g@bbox[2, ])
+                       )
+names(df.arrow) <- c("x", "xend", "y", "yend.bot", "yend.top")
+## start of arrows
+arr.bgn <- c(mean(sp.wtsd.bnd.g@bbox[2, ]), mean(sp.wtsd.bnd.g@bbox[1, ]))
+## end of arrows
+gm.state.bb <- attr(gm.state.bnd, which = "bb")
+arr.bot.end <- gm.state.bb[1:2]
+arr.top.end <- c(gm.state.bb[1] + (gm.state.bb[3] -  gm.state.bb[1]) / 2,
+                 gm.state.bb[2])
 
 ## plot google map tile and state boundary
 p.state <- ggmap(gm.state.bnd, extent="device") + 
@@ -26,7 +42,11 @@ p.state <- ggmap(gm.state.bnd, extent="device") +
             colour = "black") + 
   geom_polygon(data = sp.wtsd.bnd.g,
                aes(x = long, y = lat, group=group),
-               fill = "red")
+               fill = "red") +
+  geom_segment(data = df.arrow,
+               aes(x = x, xend = x + 15,
+                   y = y, yend = y))
+
 
 
 ## plot google map tile and watershed boundary
@@ -40,5 +60,14 @@ p.wtsd <- ggmap(gm.wtsd.bnd, extent="device") +
 plot.new()
 plot(p.state)
 print(p.wtsd, vp=viewport(.5, .7, .5, .5, just = "left"))
+## start of arrows
+arr.bgn <- c(mean(sp.wtsd.bnd.g@bbox[2, ]), mean(sp.wtsd.bnd.g@bbox[1, ]))
+## end of arrows
+gm.state.bb <- attr(gm.state.bnd, which = "bb")
+arr.bot.end <- gm.state.bb[1:2]
+arr.top.end <- c(gm.state.bb[1] + (gm.state.bb[3] -  gm.state.bb[1]) / 2,
+                 gm.state.bb[2])
+arr.top.end
 
+  
 
