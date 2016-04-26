@@ -6,6 +6,7 @@
 #load packages
 library(grid)
 library(ggplot2)
+library(ggmap)
 
 
 ## path for making map
@@ -19,33 +20,30 @@ load(file = paste0(chr.make.map.dir,
 load(file = paste0(chr.make.map.dir, 
                    "/data-files/wtsd-bnd-upper-yaquina.RData"))
 ## coords for arrows
+gm.state.bb <- as.numeric(attr(gm.state.bnd, which = "bb"))
 df.arrow <- data.frame(x = mean(sp.wtsd.bnd.g@bbox[1, ]), 
-                       xend = 0.5 * gm.state.bb[2],
+                       xend = gm.state.bb[4] + (gm.state.bb[2] - gm.state.bb[4]) / 2,
                        y = mean(sp.wtsd.bnd.g@bbox[2, ]),
-                       yend.bot =  0.7 * gm.state.bb[1],
-                       yend.top =  0.7 * gm.state.bb[1] +
-                         0.5 * mean(sp.wtsd.bnd.g@bbox[2, ])
-                       )
-names(df.arrow) <- c("x", "xend", "y", "yend.bot", "yend.top")
-## start of arrows
-arr.bgn <- c(mean(sp.wtsd.bnd.g@bbox[2, ]), mean(sp.wtsd.bnd.g@bbox[1, ]))
-## end of arrows
-gm.state.bb <- attr(gm.state.bnd, which = "bb")
-arr.bot.end <- gm.state.bb[1:2]
-arr.top.end <- c(gm.state.bb[1] + (gm.state.bb[3] -  gm.state.bb[1]) / 2,
-                 gm.state.bb[2])
-
+                       yend.bot =  mean(gm.state.bb[c(1,3)]),
+                       yend.top =  
+                         0.5 * (gm.state.bb[3] - mean(gm.state.bb[c(1,3)])) +
+                         mean(gm.state.bb[c(1,3)]))
 ## plot google map tile and state boundary
 p.state <- ggmap(gm.state.bnd, extent="device") + 
   geom_path(data = df.state.bnd,
             aes(x = long, y = lat, group=group), 
             colour = "black") + 
-  geom_polygon(data = sp.wtsd.bnd.g,
-               aes(x = long, y = lat, group=group),
-               fill = "red") +
   geom_segment(data = df.arrow,
-               aes(x = x, xend = x + 15,
-                   y = y, yend = y))
+               aes(x = x, xend = xend,
+                   y = y, yend = yend.bot),
+               size = 1) +
+  geom_segment(data = df.arrow,
+               aes(x = x, xend = xend,
+                   y = y, yend = yend.top),
+               size = 1) +
+geom_polygon(data = sp.wtsd.bnd.g,
+             aes(x = long, y = lat, group=group),
+             fill = "red")
 
 
 
@@ -59,7 +57,8 @@ p.wtsd <- ggmap(gm.wtsd.bnd, extent="device") +
 ## plot map in map
 plot.new()
 plot(p.state)
-print(p.wtsd, vp=viewport(.5, .7, .5, .5, just = "left"))
+print(p.wtsd, vp=viewport(x = 0.5, y = 0.7, 
+                          width = 0.5, height = 0.5, just = "left"))
 ## start of arrows
 arr.bgn <- c(mean(sp.wtsd.bnd.g@bbox[2, ]), mean(sp.wtsd.bnd.g@bbox[1, ]))
 ## end of arrows
