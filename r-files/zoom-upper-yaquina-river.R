@@ -54,6 +54,21 @@ google.proj4string <- CRS("+init=epsg:4326")
 ## transform state boundary to Google Maps crs
 sp.md.bnd.g <- spTransform(sp.md.bnd, google.proj4string)
 
+sp.md.bnd.g@polygons
+
+
+df.md.bnd.g <- as.data.frame(sp.md.bnd.g)
+
+
+ggplot(data = sp.md.bnd.g) + geom_polygon(aes(x = long, y = lat))
+
+str(sp.md.bnd.g@polygons)
+
+plot(sp.md.bnd.g, fill = "red")
+
+sp.md.bnd.g.no <- sp.md.bnd.g[sp.md.bnd.g@data$HU_8_NAME != "Ocean"]
+
+plot(sp.md.bnd.g.no)
 
 ## plot google map tile and watershed boundary
 ggmap(gm.wtsd.bnd, extent="device") + 
