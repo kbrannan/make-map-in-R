@@ -35,8 +35,8 @@ p.state <- ggmap(gm.state.bnd, extent="device") +
             colour = "black") + 
   geom_segment(data = df.arrow,
                aes(x = x, xend = xend,
-                   y = y, yend = yend.bot, arrow=arrow()),
-               size = 1) +
+                   y = y, yend = yend.bot, arrow=arrow(type = "closed")),
+               size = 0.75) +
   geom_segment(data = df.arrow,
                aes(x = x, xend = xend,
                    y = y, yend = yend.top),
