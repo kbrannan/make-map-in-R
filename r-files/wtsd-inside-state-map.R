@@ -35,7 +35,7 @@ p.state <- ggmap(gm.state.bnd, extent="device") +
             colour = "black") + 
   geom_segment(data = df.arrow,
                aes(x = x, xend = xend,
-                   y = y, yend = yend.bot),
+                   y = y, yend = yend.bot, arrow=arrow()),
                size = 1) +
   geom_segment(data = df.arrow,
                aes(x = x, xend = xend,
@@ -51,7 +51,10 @@ geom_polygon(data = sp.wtsd.bnd.g,
 p.wtsd <- ggmap(gm.wtsd.bnd, extent="device") + 
   geom_path(data = sp.wtsd.bnd.g,
             aes(x = long, y = lat, group=group), 
-            colour = "red", size = 1.25)
+            colour = "red", size = 1.25) +
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1.5)) +
+  scale_x_continuous(expand = c(0.05,0), limits=range(sp.wtsd.bnd.g@bbox[1,])) +
+  scale_y_continuous(expand = c(0.05,0), limits=range(sp.wtsd.bnd.g@bbox[2,]))
 
 
 ## plot map in map
@@ -59,6 +62,7 @@ plot.new()
 plot(p.state)
 print(p.wtsd, vp=viewport(x = 0.5, y = 0.7, 
                           width = 0.5, height = 0.5, just = "left"))
+
 ## start of arrows
 arr.bgn <- c(mean(sp.wtsd.bnd.g@bbox[2, ]), mean(sp.wtsd.bnd.g@bbox[1, ]))
 ## end of arrows
